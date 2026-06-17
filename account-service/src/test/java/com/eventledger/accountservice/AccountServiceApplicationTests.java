@@ -1,10 +1,10 @@
-package com.eventledger.event_gateway;
+package com.eventledger.accountservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EventGatewayApplicationTests {
+class AccountServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
