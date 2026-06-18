@@ -13,11 +13,14 @@ import com.eventledger.accountservice.repository.AccountRepository;
 import com.eventledger.accountservice.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -25,6 +28,8 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
+
+
 
     @Override
     public BalanceResponse applyTransaction(

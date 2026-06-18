@@ -30,7 +30,11 @@ management:
       show-details: always
 
 logging:
-  level:
-    org.springframework: INFO
-
+  pattern:
+    console: >
+      %d{yyyy-MM-dd HH:mm:ss}
+      %-5level
+      [%X{traceId}]
+      %logger{36}
+      - %msg%n
 

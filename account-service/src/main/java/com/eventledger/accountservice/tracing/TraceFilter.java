@@ -21,18 +21,13 @@ public class TraceFilter implements Filter {
                 (HttpServletRequest) request;
 
         String traceId =
-                httpRequest.getHeader(
-                        "X-Trace-Id"
-                );
+                httpRequest.getHeader("X-Trace-Id");
 
         if (traceId != null) {
 
             TraceContext.setTraceId(traceId);
 
-            MDC.put(
-                    "traceId",
-                    traceId
-            );
+            MDC.put("traceId", traceId);
         }
 
         try {

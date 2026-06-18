@@ -2,6 +2,7 @@ package com.eventledger.gateway.client;
 
 import com.eventledger.gateway.client.dto.ApplyTransactionRequest;
 import com.eventledger.gateway.client.dto.BalanceResponse;
+import com.eventledger.gateway.exception.AccountServiceUnavailableException;
 import com.eventledger.gateway.tracing.TraceContext;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class AccountServiceClient {
 
         return restClient.post()
                 .uri(
-                        "/accounts/{id}/transactions",
+                        "/accounts/{accountId}/transactions",
                         accountId
                 )
                 .header(
@@ -35,9 +36,7 @@ public class AccountServiceClient {
                 )
                 .body(request)
                 .retrieve()
-                .body(
-                        BalanceResponse.class
-                );
+                .body(BalanceResponse.class);
     }
 
     public BalanceResponse applyTransactionFallback(
@@ -46,7 +45,7 @@ public class AccountServiceClient {
             Exception ex
     ) {
 
-        throw new RuntimeException(
+        throw new AccountServiceUnavailableException(
                 "Account Service unavailable"
         );
     }

@@ -30,9 +30,8 @@ public class TraceFilter implements Filter {
 
         if (traceId == null || traceId.isBlank()) {
 
-            traceId =
-                    UUID.randomUUID()
-                            .toString();
+            traceId = UUID.randomUUID()
+                    .toString();
         }
 
         TraceContext.setTraceId(traceId);
