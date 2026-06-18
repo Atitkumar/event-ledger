@@ -4,6 +4,7 @@ import com.eventledger.accountservice.dto.ApplyTransactionRequest;
 import com.eventledger.accountservice.dto.AccountDetailsResponse;
 import com.eventledger.accountservice.dto.BalanceResponse;
 import com.eventledger.accountservice.service.AccountService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class AccountController {
     @PostMapping("/{accountId}/transactions")
     public BalanceResponse applyTransaction(
             @PathVariable String accountId,
-            @RequestBody ApplyTransactionRequest request
+            @Valid @RequestBody ApplyTransactionRequest request
     ) {
 
         return accountService
