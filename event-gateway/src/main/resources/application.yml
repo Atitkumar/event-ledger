@@ -28,5 +28,11 @@ management:
         include: health,info,metrics
 
 logging:
-  level:
-    org.springframework: INFO
+  pattern:
+    console: >
+      %d{yyyy-MM-dd HH:mm:ss}
+      [%thread]
+      %-5level
+      [%X{traceId}]
+      %logger
+      - %msg%n
