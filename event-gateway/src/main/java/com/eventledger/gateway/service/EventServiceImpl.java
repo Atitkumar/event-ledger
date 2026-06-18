@@ -1,9 +1,12 @@
 package com.eventledger.gateway.service;
 
+import com.eventledger.gateway.client.AccountServiceClient;
+import com.eventledger.gateway.client.dto.ApplyTransactionRequest;
 import com.eventledger.gateway.dto.EventRequest;
 import com.eventledger.gateway.dto.EventResponse;
 import com.eventledger.gateway.entity.Event;
 import com.eventledger.gateway.entity.EventStatus;
+import com.eventledger.gateway.exception.AccountServiceUnavailableException;
 import com.eventledger.gateway.exception.EventNotFoundException;
 import com.eventledger.gateway.repository.EventRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +27,8 @@ public class EventServiceImpl
 
     private final ObjectMapper objectMapper;
 
+    private final AccountServiceClient accountServiceClient;
+
     @Override
     public EventResponse createEvent(
             EventRequest request
@@ -36,9 +41,9 @@ public class EventServiceImpl
 
         if (existing.isPresent()) {
 
-            Event event = existing.get();
-
-            return map(event);
+            return map(
+                    existing.get()
+            );
         }
 
         Event event = new Event();
@@ -67,10 +72,6 @@ public class EventServiceImpl
                 request.getEventTimestamp()
         );
 
-        event.setStatus(
-                EventStatus.PROCESSED
-        );
-
         try {
 
             event.setMetadataJson(
@@ -82,6 +83,32 @@ public class EventServiceImpl
         } catch (Exception ex) {
 
             throw new RuntimeException(ex);
+        }
+
+        try {
+
+            accountServiceClient.applyTransaction(
+                    request.getAccountId(),
+                    buildAccountRequest(
+                            request
+                    )
+            );
+
+            event.setStatus(
+                    EventStatus.PROCESSED
+            );
+
+        } catch (Exception ex) {
+
+            event.setStatus(
+                    EventStatus.FAILED
+            );
+
+            repository.save(event);
+
+            throw new AccountServiceUnavailableException(
+                    "Account Service unavailable"
+            );
         }
 
         Event saved =
@@ -134,5 +161,34 @@ public class EventServiceImpl
                 event.getEventTimestamp(),
                 event.getStatus()
         );
+    }
+    private ApplyTransactionRequest buildAccountRequest(
+            EventRequest request
+    ) {
+
+        ApplyTransactionRequest accountRequest =
+                new ApplyTransactionRequest();
+
+        accountRequest.setEventId(
+                request.getEventId()
+        );
+
+        accountRequest.setType(
+                request.getType()
+        );
+
+        accountRequest.setAmount(
+                request.getAmount()
+        );
+
+        accountRequest.setCurrency(
+                request.getCurrency()
+        );
+
+        accountRequest.setEventTimestamp(
+                request.getEventTimestamp()
+        );
+
+        return accountRequest;
     }
 }

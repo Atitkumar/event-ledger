@@ -1,11 +1,14 @@
 package com.eventledger.gateway.service;
 
+import com.eventledger.gateway.client.AccountServiceClient;
 import com.eventledger.gateway.dto.EventRequest;
 import com.eventledger.gateway.dto.EventResponse;
 import com.eventledger.gateway.entity.Event;
 import com.eventledger.gateway.entity.EventStatus;
 import com.eventledger.gateway.entity.EventType;
+import com.eventledger.gateway.exception.AccountServiceUnavailableException;
 import com.eventledger.gateway.repository.EventRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,8 +34,12 @@ class EventServiceImplTest {
     @Mock
     private ObjectMapper objectMapper;
 
+    @Mock
+    private AccountServiceClient accountServiceClient;
+
     @InjectMocks
     private EventServiceImpl service;
+
 
     @Test
     void shouldCreateEvent() throws Exception {

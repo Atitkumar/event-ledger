@@ -48,4 +48,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest()
                 .body(errors);
     }
+    @ExceptionHandler(
+            AccountServiceUnavailableException.class
+    )
+    public ResponseEntity<?> handleAccountServiceDown(
+            AccountServiceUnavailableException ex
+    ) {
+
+        return ResponseEntity.status(
+                        HttpStatus.SERVICE_UNAVAILABLE
+                )
+                .body(
+                        Map.of(
+                                "message",
+                                ex.getMessage()
+                        )
+                );
+    }
 }
