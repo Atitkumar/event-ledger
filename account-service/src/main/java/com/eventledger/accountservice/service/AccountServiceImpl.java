@@ -1,7 +1,9 @@
 package com.eventledger.accountservice.service;
 
+import com.eventledger.accountservice.dto.AccountDetailsResponse;
 import com.eventledger.accountservice.dto.ApplyTransactionRequest;
 import com.eventledger.accountservice.dto.BalanceResponse;
+import com.eventledger.accountservice.dto.TransactionSummary;
 import com.eventledger.accountservice.entity.Account;
 import com.eventledger.accountservice.entity.AccountTransaction;
 import com.eventledger.accountservice.entity.TransactionType;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -98,6 +101,37 @@ public class AccountServiceImpl implements AccountService {
         return new BalanceResponse(
                 accountId,
                 account.getBalance()
+        );
+    }
+
+    @Override
+    public AccountDetailsResponse getAccountDetails(
+            String accountId
+    ) {
+
+        Account account = accountRepository
+                .findById(accountId)
+                .orElseThrow(
+                        () -> new AccountNotFoundException(accountId)
+                );
+
+        List<TransactionSummary> transactions =
+                transactionRepository
+                        .findByAccountIdOrderByEventTimestampAsc(accountId)
+                        .stream()
+                        .map(tx -> new TransactionSummary(
+                                tx.getEventId(),
+                                tx.getType(),
+                                tx.getAmount(),
+                                tx.getCurrency(),
+                                tx.getEventTimestamp()
+                        ))
+                        .toList();
+
+        return new AccountDetailsResponse(
+                accountId,
+                account.getBalance(),
+                transactions
         );
     }
 }
