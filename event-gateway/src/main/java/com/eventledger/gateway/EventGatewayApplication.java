@@ -1,4 +1,4 @@
-package com.eventledger.eventgateway;
+package com.eventledger.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
